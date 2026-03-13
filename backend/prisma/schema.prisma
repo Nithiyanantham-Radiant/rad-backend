@@ -1,0 +1,59 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+model Form {
+  id          String       @id @default(auto()) @map("_id") @db.ObjectId
+  name        String
+  useCase     String
+  datasetId   String?
+  schema      Json?
+  uiSchema    Json?
+  mapping     Json?
+  craftState  String?
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  @@map("forms")
+}
+
+model Submission {
+  id          String       @id @default(auto()) @map("_id") @db.ObjectId
+  formId      String
+  data        Json
+  submittedAt DateTime     @default(now())
+
+  @@map("submissions")
+}
+
+model Dataset {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  datasetId String   @unique
+  name      String
+  fields    Json
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("datasets")
+}
+
+// ---------------------------------------------------------------------------------
+// YOUR DATASETS BELOW
+// ---------------------------------------------------------------------------------
+// Because we are using Database-Agnostic DMMF, any table you define below 
+// will automatically appear in the Form Builder "Dataset Selection" Dropdown!
+
+model Employee {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  firstName   String
+  lastName    String
+  email       String?
+  department  String?
+
+  @@map("employees")
+}

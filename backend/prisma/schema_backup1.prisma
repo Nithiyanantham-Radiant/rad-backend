@@ -1,0 +1,359 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+type DatasetsFields {
+  name     String
+  required Boolean
+  type     String
+}
+
+type FormsMapping {
+  mappings       FormsMappingMappings[]
+  /// Could not determine type: the field only had null or empty values in the sample set.
+  unmappedFields Json?
+}
+
+type FormsMappingMappings {
+  datasetKey String
+  formKey    String
+  /// Could not determine type: the field only had null or empty values in the sample set.
+  transform  Json?
+}
+
+type FormsSchema {
+  properties FormsSchemaProperties
+  type       String
+}
+
+type FormsSchemaProperties {
+  Department       FormsSchemaPropertiesDepartment?
+  datePicker       FormsSchemaPropertiesDatePicker?
+  dateRange        FormsSchemaPropertiesDateRange?
+  dateTimePicker   FormsSchemaPropertiesDateTimePicker?
+  dropdown         FormsSchemaPropertiesDropdown?
+  multipleDropdown FormsSchemaPropertiesMultipleDropdown?
+  numberField      FormsSchemaPropertiesNumberField?
+  textField        FormsSchemaPropertiesTextField?
+}
+
+type FormsSchemaPropertiesDatePicker {
+  format String
+  title  String
+  type   String
+}
+
+type FormsSchemaPropertiesDateRange {
+  properties FormsSchemaPropertiesDateRangeProperties
+  required   String[]
+  title      String
+  type       String
+}
+
+type FormsSchemaPropertiesDateRangeProperties {
+  from FormsSchemaPropertiesDateRangePropertiesFrom
+  to   FormsSchemaPropertiesDateRangePropertiesTo
+}
+
+type FormsSchemaPropertiesDateRangePropertiesFrom {
+  format String
+  type   String
+}
+
+type FormsSchemaPropertiesDateRangePropertiesTo {
+  format String
+  type   String
+}
+
+type FormsSchemaPropertiesDateTimePicker {
+  format String
+  title  String
+  type   String
+}
+
+type FormsSchemaPropertiesDepartment {
+  enum  String[]
+  title String
+  type  String
+}
+
+type FormsSchemaPropertiesDropdown {
+  enum  String[]
+  title String
+  type  String
+}
+
+type FormsSchemaPropertiesMultipleDropdown {
+  items       FormsSchemaPropertiesMultipleDropdownItems
+  title       String
+  type        String
+  uniqueItems Boolean
+}
+
+type FormsSchemaPropertiesMultipleDropdownItems {
+  enum String[]
+  type String
+}
+
+type FormsSchemaPropertiesNumberField {
+  multipleOf Int
+  title      String
+  type       String
+}
+
+type FormsSchemaPropertiesTextField {
+  title String
+  type  String
+}
+
+type FormsUiSchema {
+  Department       FormsUiSchemaDepartment?
+  dateRange        FormsUiSchemaDateRange?
+  dropdown         FormsUiSchemaDropdown?
+  multipleDropdown FormsUiSchemaMultipleDropdown?
+  /// Nested objects had no data in the sample dataset to introspect a nested type.
+  textField        Json?
+  ui_order         String[]                       @map("ui:order")
+}
+
+type FormsUiSchemaDateRange {
+  ui_widget String @map("ui:widget")
+}
+
+type FormsUiSchemaDepartment {
+  ui_widget String @map("ui:widget")
+}
+
+type FormsUiSchemaDropdown {
+  ui_widget String @map("ui:widget")
+}
+
+type FormsUiSchemaMultipleDropdown {
+  classNames String
+  ui_options FormsUiSchemaMultipleDropdownUiOptions @map("ui:options")
+  ui_widget  String @map("ui:widget")
+}
+
+type FormsUiSchemaMultipleDropdownUiOptions {
+multiple Boolean
+}
+
+type MfpPlanItem {
+  BusinessUnit String
+  Department   String
+}
+
+type MfpPlanLocation {
+  /// Could not determine type: the field only had null or empty values in the sample set.
+  LOCATION_TYPE Json?
+  /// Could not determine type: the field only had null or empty values in the sample set.
+  country       Json?
+  /// Could not determine type: the field only had null or empty values in the sample set.
+  state         Json?
+}
+
+type MfpPlanTime {
+  Day     DateTime @db.Date
+  Half    String
+  Month   String
+  Quarter String
+  Week    String
+  Year    Int
+}
+
+model datasets {
+  id        String           @id @default(auto()) @map("_id") @db.ObjectId
+  createdAt DateTime         @db.Date
+  datasetId String
+  fields    DatasetsFields[]
+  name      String
+  updatedAt DateTime         @db.Date
+}
+
+model fact_data {
+  id           String   @id @default(auto()) @map("_id") @db.ObjectId
+  Day          DateTime @db.Date
+  Margin       Int
+  Ranges       String
+  Sales        Int
+  Year         Int
+  gross_profit Int
+  gross_sales  Int
+  net_sales    Int
+}
+
+model forms {
+  id         String        @id @default(auto()) @map("_id") @db.ObjectId
+  craftState String
+  createdAt  DateTime      @db.Date
+  datasetId  String
+  mapping    FormsMapping
+  name       String
+  schema     FormsSchema
+  uiSchema   FormsUiSchema
+  updatedAt  DateTime      @db.Date
+  useCase    String
+}
+
+model item {
+  id           String @id @default(auto()) @map("_id") @db.ObjectId
+  BusinessUnit String
+  Department   String
+  Ranges       String
+}
+
+/// This collection uses a JSON Schema defined in the database, which requires additional setup for migrations. Visit https://pris.ly/d/mongodb-json-schema for more info.
+model location {
+  id                  String   @id @map("_id")
+  city                String
+  country             String
+  created_at          DateTime @db.Date
+  district            String
+  effective_from_date DateTime @db.Date
+  /// Could not determine type: the field only had null or empty values in the sample set.
+  effective_to_date   Json?
+  locality            String
+  postal_area         String
+  region              String
+  state               String
+  timezone            String
+  updated_at          DateTime @db.Date
+}
+
+/// This collection uses a JSON Schema defined in the database, which requires additional setup for migrations. Visit https://pris.ly/d/mongodb-json-schema for more info.
+model mfp_bu_plan {
+  id              String   @id @default(auto()) @map("_id") @db.ObjectId
+  /// Multiple data types found: Float: 96.9%, Int: 3.1% out of 65 sampled entries
+  Approved_Margin Json
+  /// Multiple data types found: Float: 96.9%, Int: 3.1% out of 65 sampled entries
+  Approved_Sales  Json
+  BusinessUnit    String
+  Day             DateTime @db.Date
+  Department      String
+  Half            String
+  /// Multiple data types found: Float: 96.9%, Int: 3.1% out of 65 sampled entries
+  Margin_LLY      Json
+  /// Multiple data types found: Float: 96.9%, Int: 3.1% out of 65 sampled entries
+  Margin_LY       Json
+  Month           String
+  /// Multiple data types found: Float: 96.9%, Int: 3.1% out of 65 sampled entries
+  Planned_Margin  Json
+  /// Multiple data types found: Float: 96.9%, Int: 3.1% out of 65 sampled entries
+  Planned_Sales   Json
+  Quarter         String
+  Ranges          String
+  /// Multiple data types found: Float: 96.9%, Int: 3.1% out of 65 sampled entries
+  Sales_LLY       Json
+  /// Multiple data types found: Float: 96.9%, Int: 3.1% out of 65 sampled entries
+  Sales_LY        Json
+  Week            String
+  Year            Int
+}
+
+model mfp_plan {
+  id            String          @id @default(auto()) @map("_id") @db.ObjectId
+  Item          MfpPlanItem
+  ItemId        String          @db.ObjectId
+  Location      MfpPlanLocation
+  /// Could not determine type: the field only had null or empty values in the sample set.
+  LocationId    Json?
+  Planned_Sales Int
+  Planning_Type String
+  Sales_IVY     Int
+  Sales_IY      Int
+  Time          MfpPlanTime
+  TimeId        String          @db.ObjectId
+  created_at    DateTime        @db.Date
+}
+
+/// This collection uses a JSON Schema defined in the database, which requires additional setup for migrations. Visit https://pris.ly/d/mongodb-json-schema for more info.
+model mfp_sp_plan {
+  id              String   @id @default(auto()) @map("_id") @db.ObjectId
+  Approved_Margin Float
+  Approved_Sales  Float
+  BusinessUnit    String
+  Day             DateTime @db.Date
+  Department      String
+  Half            String
+  Margin_LLY      Float
+  Margin_LY       Float
+  Month           String
+  Planned_Margin  Float
+  Planned_Sales   Float
+  Quarter         String
+  Ranges          String
+  Sales_LLY       Float
+  Sales_LY        Float
+  Week            String
+  Year            Int
+}
+
+/// This collection uses a JSON Schema defined in the database, which requires additional setup for migrations. Visit https://pris.ly/d/mongodb-json-schema for more info.
+model mfp_td_plan {
+  id              String   @id @default(auto()) @map("_id") @db.ObjectId
+  Approved_Margin Float
+  Approved_Sales  Float
+  BusinessUnit    String
+  Day             DateTime @db.Date
+  Department      String
+  Half            String
+  Margin_LLY      Float
+  Margin_LY       Float
+  Month           String
+  Planned_Margin  Float
+  Planned_Sales   Float
+  Quarter         String
+  Ranges          String
+  Sales_LLY       Float
+  Sales_LY        Float
+  Week            String
+  Year            Int
+}
+
+model product_inventory {
+  id           String @id @map("_id")
+  category     String
+  price        Int
+  product_name String
+  stock        Int
+}
+
+model rupesh_Fact {
+  id            String   @id @default(auto()) @map("_id") @db.ObjectId
+  Item          String[]
+  ItemId        BigInt
+  Location      String[]
+  LocationId    BigInt
+  Planned_Sales Int
+  Planning_Type String
+  Sales_lY      Int
+  Sales_lYY     Int
+  Time          String[]
+  TimeId        BigInt
+  created_at    DateTime @db.Date
+
+  @@index([Planning_Type], map: "Planning_Type_1")
+  @@index([LocationId], map: "LocationId_1")
+  @@index([ItemId], map: "ItemId_1")
+  @@index([TimeId], map: "TimeId_1")
+}
+
+model submissions {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+}
+
+model time {
+  id       String   @id @default(auto()) @map("_id") @db.ObjectId
+  All_Time String
+  Day      DateTime @db.Date
+  Half     String
+  Month    String
+  Quarter  String
+  Week     String
+  Year     Int
+}
