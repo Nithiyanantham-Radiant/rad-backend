@@ -152,6 +152,8 @@ exports.guestToken = async (req, res) => {
         const token = await getAccessToken();
         const csrf = await getCsrfToken(token);
 
+      console.log("CSRF Token: ",csrf);
+
         const guestUser = {
             username: user?.username || 'guest',
             first_name: user?.first_name || 'Guest',
