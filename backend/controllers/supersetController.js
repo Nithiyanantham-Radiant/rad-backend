@@ -160,6 +160,8 @@ exports.guestToken = async (req, res) => {
             last_name: user?.last_name || 'User',
         };
 
+      console.log("Guest User Details: ",guestUser);
+
         const { data } = await supersetClient.post('/api/v1/security/guest_token/', {
             resources: [{ type: 'dashboard', id: dashboardId }],
             user: guestUser,
