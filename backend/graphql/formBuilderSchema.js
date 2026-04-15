@@ -58,7 +58,7 @@ const typeDefs = `#graphql
     getDatasets: [Dataset!]!
     getDatasetSchema(datasetId: String!): JSON
     getDatasetSample(datasetId: String!): JSON
-    getDatasetFieldDistinctValues(datasetId: String!, field: String!): [String!]
+    getDatasetFieldDistinctValues(datasetId: String!, field: String!, query: JSON): [String!]
   }
 
   type Mutation {
@@ -163,13 +163,16 @@ const resolvers = {
             return null;
         }
     },
-    getDatasetFieldDistinctValues: async (_, { datasetId, field }) => {
+    getDatasetFieldDistinctValues: async (_, { datasetId, field, query }) => {
         if (!datasetId || !field) return [];
         try {
-            const distinctCmd = await prisma.$runCommandRaw({
+            const cmd = {
                 distinct: datasetId,
                 key: field
-            });
+            };
+            if (query) cmd.query = query;
+            
+            const distinctCmd = await prisma.$runCommandRaw(cmd);
             // MongoDB distinct command returns { values: [...] }
             return distinctCmd?.values?.filter(v => v != null).map(String) || [];
         } catch (err) {
